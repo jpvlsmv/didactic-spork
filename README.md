@@ -13,3 +13,6 @@ Access control based on metadata and external auth.
 Concept of file-quality:  An MP3 can be regenerated from .FLAC but not vice-versa.  Keep the latter, and a reference to the former.
 Multi-file bundles: A CD image (.iso) is made up of thousands of chunks, which are sometimes actual files.  cf/ Jigdo.
 VFS interface/IFS driver perhaps, webdav? What cloud plumbing would be needed?
+
+# Interface:
+For photos, a jQuery-based gallery with timeline, permissions levels, file list/metadata stored json in cloud.
