@@ -13,7 +13,6 @@
 import os
 from hashlib import md5
 
-files = dict()
 
 def fhash(f,hashtype=md5):
   ''' Apply hashtype functions to (open) file-ish x, and return the result 
@@ -33,54 +32,62 @@ def fhash(f,hashtype=md5):
 
   '''
   hash_fn = hashtype()
+
   for chunk in iter(lambda: f.read(4096), b''):
     hash_fn.update(chunk)
+
   return hash_fn.hexdigest()
 
-def dedup(root,hashtype):
-  print("ok")
-  print(zip(os.walk(root)))
-  for (fname, dirName) in [ (f, d) for (d, s, f) in zip(os.walk(root)) ]:
-  ##for dirName, subdirList, fileList in os.walk(root):
-  ##  for fname in fileList:
-      print('.',sep='')
-      p = os.path.join(dirName, fname)
-      sz = os.stat(p).st_size
+class Deduper():
 
-      if sz not in files:
-        # First time we have seen this size, just record path
-        files[sz] = p
-      else:
-        if not isinstance(files[sz], dict):
-          # hash the old path, and dict it
-          with open(files[sz]) as r:
-            oldh = fhash(r,hashtype)
-          files[sz] = { oldh: files[sz] }
+  files = dict()
 
-        with open(p) as r:
-          h = fhash(r,hashtype)
+  def assess_file(self, pathname):
+    sz = os.stat(pathname).st_size
+  
+    if sz not in self.files:
+      # First time we have seen this size, just record path
+      self.files[sz] = pathname
+    else:
+      if not isinstance(self.files[sz], dict):
+        # hash the old path, and dict it
+        with open(self.files[sz],"rb") as r:
+          oldh = fhash(r,self.hashtype)
+          self.files[sz] = { oldh: self.files[sz] }
 
-        if h in files[sz]:
-          # Compare len(p) with len(files[sz][h]) and remove longer
-          f=files[sz][h]
-          if len(p) < len(f): 
-            files[sz][h] = p
-            print(f'rm {f}')
+      with open(pathname,"rb") as r:
+        h = fhash(r,self.hashtype)
+  
+      if h in self.files[sz]:
+        # Compare len(p) with len(self.files[sz][h]) and remove longer
+        f=self.files[sz][h]
+        if len(pathname) < len(f): 
+          self.files[sz][h] = pathname
+          print(f'duplicate of {pathname} (but longer length)')
+          yield(f)
+        elif len(pathname) == len(f) and pathname < f:
+            self.files[sz][h] = pathname
+            print(f'duplicate of {pathname} (but sorted first)')
             yield(f)
-          elif len(p) == len(f) and p < f:
-              files[sz][h] = p
-              print(f'rm {p}')
-              yield(f)
-          else:
-            print(f'rm {p}')
-            yield(p)
         else:
-          files[sz][h] = p
+          print(f'duplicate of {f}')
+          yield(pathname)
+      else:
+        self.files[sz][h] = pathname
+
+  def dedup(self, root, hashtype):
+    self.hashtype = hashtype
+    for dirName, subdirList, fileList in os.walk(root):
+      for fname in fileList:
+        p = os.path.join(dirName, fname)
+        yield from self.assess_file(p)
 
 if __name__ == "__main__":
   from hashlib import md5
-  print("um")
-  dedup('.',md5)
+  D = Deduper()
+  for f in D.dedup('.',md5):
+    print(f'Received filename {f} to delete')
+    os.unlink(f)
   '''
   >>>dedup('.',md5)
   'ok'
