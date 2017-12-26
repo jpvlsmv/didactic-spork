@@ -13,34 +13,19 @@
 import os
 from hashlib import md5
 
-
-def fhash(f,hashtype=md5):
-  ''' Apply hashtype functions to (open) file-ish x, and return the result 
-  >>> from io import BytesIO
-
-  Check that we get the correct hash of empty:
-  >>> fhash(BytesIO(b''),md5)
-  'd41d8cd98f00b204e9800998ecf8427e'
-
-  Check that chunking is correct (5 chunks here):
-  >>> fhash(BytesIO(b'hello'*4096),md5)
-  'c21e4dada5bc00c358683211282c53f7'
-
-  Check that chunking is correct (5 chunks and a partial here):
-  >>> fhash(BytesIO(b'hello'*4097),md5)
-  'ff072cf63ffe673bb40785c11c74575f'
-
-  '''
-  hash_fn = hashtype()
-
-  for chunk in iter(lambda: f.read(4096), b''):
-    hash_fn.update(chunk)
-
-  return hash_fn.hexdigest()
-
 class Deduper():
-
-  files = dict()
+  def fhash(f,hashtype=md5):
+    '''Apply hashtype functions to (open) file-ish x, and return the result'''
+    hash_fn = hashtype()
+  
+    for chunk in iter(lambda: f.read(4096), b''):
+      hash_fn.update(chunk)
+  
+    return hash_fn.hexdigest()
+  
+  def __init__(hashfun):
+    self.hashfun = hashfun
+    self.files = dict()
 
   def assess_file(self, pathname):
     sz = os.stat(pathname).st_size
@@ -84,8 +69,8 @@ class Deduper():
 
 if __name__ == "__main__":
   from hashlib import md5
-  D = Deduper()
-  for f in D.dedup('.',md5):
+  D = Deduper(hashfun = md5)
+  for f in D.dedup('.'):
     print(f'Received filename {f} to delete')
     os.unlink(f)
   '''
