@@ -9,6 +9,7 @@ class Walker:
     pass
 
 class localfsWalker(Walker):
+  # inherit def __init__():
   def walk(self, pdir):
     for entry in pdir.iterdir():
       if entry.is_dir():

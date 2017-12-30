@@ -6,15 +6,25 @@
   this module keeps track of what file sizes have been seen, and only computes
   hashes of repeat-sizes.
 '''
+
 from pathlib import Path
-from collections import namedtuple
-from itertools import chain
+from archstore import walkers,dupfinder
 
 def main(args):
-  pass
-    
+  w = walkers.localfsWalker()
+  d = dupfinder.Dupfinder(w, args.paths[0])
+  for duplicate in d.scan():
+    print(f'Would remove {duplicate}')
+
 if __name__ == "__main__":
   import argparse
+
+  def _readable_dir(p):
+    if Path(p).is_dir():
+      return Path(p)
+    else:
+      raise argparse.ArgumentTypeError(f'{p} is not a valid directory')
+    
   parser = argparse.ArgumentParser()
   parser.add_argument('--verbose','-v',action='count')
   parser.add_argument('--noopt', '-n', action='store_true')
