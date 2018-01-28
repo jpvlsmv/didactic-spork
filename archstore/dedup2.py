@@ -12,6 +12,7 @@ from archstore import walkers,dupfinder
 
 def main(args):
   w = walkers.localfsWalker()
+  h = hashers.localMD5Hasher()
   d = dupfinder.Dupfinder(w, args.paths[0])
   for duplicate in d.scan():
     print(f'Would remove {duplicate}')
