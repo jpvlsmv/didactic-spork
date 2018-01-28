@@ -10,7 +10,7 @@ config = {
   'author': 'Joe Moore',
   'url': 'https://github.com/jpvlsmv/didactic-spork',
   'author_email': 'jpvlsmv@gmail.com',
-  'version': '0.01',
+  'version': '0.0.1',
   'install_requires': ['nose'],
   'packages': ['archstore'],
   'scripts': [],

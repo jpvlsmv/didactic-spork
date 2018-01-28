@@ -4,26 +4,29 @@ from .context import archstore
 import unittest
 
 class WalkerTest(unittest.TestCase):
-  def test1(self):
-    from .context.archstore import walkers
+  def test_constructor_type(self):
+    '''Verify that the default constructor returns a proper object'''
+    from archstore import walkers
     w = walkers.Walker()
-    self.assert(isinstance(w,walkers.Walker))
+    self.assertTrue(isinstance(w,walkers.Walker))
 
 class localfsWalkerTest(unittest.TestCase):
-  def test1(self):
-    from .context.archstore import walkers
+  def test_constructor_type(self):
+    '''Verify that the default constructor returns a proper object'''
+    from archstore import walkers
     w = walkers.localfsWalker()
-    self.assert(isinstance(w,walkers.localfsWalker))
-    self.assert(isinstance(w,walkers.Walker))
-  def test2(self):
-    import tempfile
-    from .context.archstore import walkers
+    self.assertTrue(isinstance(w,walkers.localfsWalker))
+    self.assertTrue(isinstance(w,walkers.Walker))
+  def test_walk_empty_tmpdir(self):
+    from tempfile import TemporaryDirectory
+    from pathlib import Path
+    from archstore import walkers
     w = walkers.localfsWalker()
-    with tempfile.TemporaryDir() as T:
-      self.assert(w.walk(Path(T)) == [ ] )
+    with TemporaryDirectory() as T:
+      self.assertListEqual(list(w.walk(Path(T))), list())
 
 class ArchstoreTest(unittest.TestCase):
-  """Basic test cases."""
+  '''Basic test cases.'''
   def test1(self):
     self.assertEqual(1,1)
 
