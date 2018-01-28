@@ -19,7 +19,7 @@ deploy:
       YWg0d0NxSnhFQlBETlg3UytrOUwyQVdzOXUyN1RoVW1xcldJWVdpSUxTMGoxRXdMNXFUUzR5Rms9
   true:
     python: 3.6
-    repo: jpvlsmv/micropython-gy521
+    repo: jpvlsmv/didactic-spork
     tags: true
 install: pip install -U tox-travis
 language: python
