@@ -1,3 +1,5 @@
+[![Python 3](https://pyup.io/repos/github/jpvlsmv/didactic-spork/python-3-shield.svg)](https://pyup.io/repos/github/jpvlsmv/didactic-spork/)
+[![Build Status](https://travis-ci.org/jpvlsmv/didactic-spork.svg?branch=master)](https://travis-ci.org/jpvlsmv/didactic-spork)  
 # didactic-spork
 
 Arrange digital media and files in a protected, redundant, accessible way.
