@@ -25,7 +25,7 @@ class Archstore_localMD5Test(unittest.TestCase):
       h1 = hashers.localMD5Hasher()
       open(d + 'test1','w').close()
       # Verify that the empty tempfile hashes
-      self.assertEquals(h1.hash(Path(d + 'test1')), 'd41d8cd98f00b204e9800998ecf8427e')
+      self.assertEquals(h1._hash(Path(d + 'test1')), 'd41d8cd98f00b204e9800998ecf8427e')
 
   def test_short_file(self):
     with TemporaryDirectory() as d:
@@ -33,7 +33,7 @@ class Archstore_localMD5Test(unittest.TestCase):
       # Start over with a short message
       with open(d + 'test2', 'w') as f:
 	      f.write('Hello World')
-      self.assertEquals(h1.hash(Path(d+'test2')), 'b10a8db164e0754105b7a99be72e3fe5')
+      self.assertEquals(h1._hash(Path(d+'test2')), 'b10a8db164e0754105b7a99be72e3fe5')
 
   def test_long_file(self):
     with TemporaryDirectory() as d:
@@ -41,7 +41,7 @@ class Archstore_localMD5Test(unittest.TestCase):
       with open(d+'test3', 'w') as f:
         # Start over, message is 11 cipher-blocks long
         f.write('Hello World' * 64)
-        self.assertEquals(h1.hash(Path(d+'test3')), 'd41d8cd98f00b204e9800998ecf8427e')
+        self.assertEquals(h1._hash(Path(d+'test3')), 'd41d8cd98f00b204e9800998ecf8427e')
 
   def test_longer_file(self):
     with TemporaryDirectory() as d:
@@ -50,7 +50,7 @@ class Archstore_localMD5Test(unittest.TestCase):
         # Start over, message is 11 cipher-blocks long
         f.write('Hello World' * 64)
         f.write('and more')
-        self.assertEquals(h1.hash(Path(d+'test3')), 'd41d8cd98f00b204e9800998ecf8427e' )
+        self.assertEquals(h1._hash(Path(d+'test3')), 'd41d8cd98f00b204e9800998ecf8427e' )
 
 from hashlib import sha256
 class Archstore_localCryptoTest(unittest.TestCase):
@@ -65,7 +65,7 @@ class Archstore_localCryptoTest(unittest.TestCase):
       h1 = hashers.localCryptoHasher(sha256)
       open(d + 'test1','w').close()
       # Verify that the empty tempfile hashes
-      self.assertEquals(h1.hash(Path(d + 'test1')), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
+      self.assertEquals(h1._hash(Path(d + 'test1')), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
 
   def test_short_file(self):
     with TemporaryDirectory() as d:
@@ -73,7 +73,7 @@ class Archstore_localCryptoTest(unittest.TestCase):
       # Start over with a short message
       with open(d + 'test2', 'w') as f:
 	      f.write('Hello World')
-      self.assertEquals(h1.hash(Path(d+'test2')), 'a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
+      self.assertEquals(h1._hash(Path(d+'test2')), 'a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
 
   def test_long_file(self):
     with TemporaryDirectory() as d:
@@ -81,7 +81,7 @@ class Archstore_localCryptoTest(unittest.TestCase):
       with open(d+'test3', 'w') as f:
         # Start over, message is 11 cipher-blocks long
         f.write('Hello World' * 64)
-        self.assertEquals(h1.hash(Path(d+'test3')), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
+        self.assertEquals(h1._hash(Path(d+'test3')), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
 
   def test_longer_file(self):
     with TemporaryDirectory() as d:
@@ -90,7 +90,7 @@ class Archstore_localCryptoTest(unittest.TestCase):
         # Start over, message is 11 cipher-blocks long
         f.write('Hello World' * 64)
         f.write('and more')
-        self.assertEquals(h1.hash(Path(d+'test3')), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
+        self.assertEquals(h1._hash(Path(d+'test3')), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
 
 if __name__ == "__main__":
   unittest.main()
