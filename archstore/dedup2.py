@@ -8,14 +8,23 @@
 '''
 
 from pathlib import Path
-from archstore import walkers,dupfinder
+from archstore import walkers,hashers
+from itertools import chain
+import os
 
 def main(args):
   w = walkers.localfsWalker()
   h = hashers.localMD5Hasher()
-  d = dupfinder.Dupfinder(w, args.paths[0])
-  for duplicate in d.scan():
-    print(f'Would remove {duplicate}')
+  for file in chain.from_iterable( w.walk(Path(p)) for p in args.paths[0] ):
+      duplicates = h.has_seen(file)
+      if duplicates is not None:
+        print(f'Dealing with files size {os.stat(file).st_size}:')
+        keep = min(duplicates)
+        for d in sorted(duplicates):
+          if d!=keep:
+            print(f'Would remove {d}')
+          else:
+            print(f'{d} is the path to keep')
 
 if __name__ == "__main__":
   import argparse

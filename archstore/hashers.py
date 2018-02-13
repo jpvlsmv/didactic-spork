@@ -5,6 +5,7 @@ observation that two files of different sizes can not be identical allows us
 to delay calculating the hash of a file until the 2nd time a file of that
 size is seen.
 '''
+import os
 
 class Hasher:
   '''Base class for hashing functionality'''
@@ -16,7 +17,7 @@ class Hasher:
        or a list of other pathlikes that are identical '''
     f_size = self._size(file_elem)
 
-    if f_size not in self._sizes_seen:
+    if f_size not in self.__sizes_seen:
       self.__sizes_seen[f_size] = dict()
       self.__sizes_seen[f_size]["todo"] = file_elem
       return None
@@ -25,17 +26,19 @@ class Hasher:
       # "todo" is a magic tag this is the 2nd time for this size,
       # we didn't hash the file last time, so now we need to, do, and 
       # remove the "todo" key
-      prev = self._hash(self.__sizes_seen[f_size]["todo"])
-      self.__sizes_seen[f_size][prev] = list(self.__sizes_seen[f_size].pop("todo"))
+      prev_hash = self._hash(self.__sizes_seen[f_size]["todo"])
+      self.__sizes_seen[f_size][prev_hash] = set( [ self.__sizes_seen[f_size]["todo"] ] )
+      del self.__sizes_seen[f_size]["todo"]
 
     f_hash = self._hash(file_elem)
 
     if f_hash not in self.__sizes_seen[f_size]:
-      hashes_seen["todo"] = file_elem
+      self.__sizes_seen[f_size] = dict({"todo": file_elem})
+      self.__sizes_seen[f_size]["todo"] = file_elem
       return None
 
     else:
-      self.__sizes_seen[f_size][f_hash].append(file_elem)
+      self.__sizes_seen[f_size][f_hash].add(file_elem)
       return list(self.__sizes_seen[f_size][f_hash])
 
   def _size(self, file_elem):
