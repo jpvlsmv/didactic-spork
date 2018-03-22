@@ -8,49 +8,52 @@
 '''
 
 from pathlib import Path
-from archstore import walkers,hashers
+from archstore import walkers, hashers
 from itertools import chain
 import os
 
+
 def main(args):
-  w = walkers.localfsWalker()
-  h = hashers.localMD5Hasher()
-  for file in chain.from_iterable( w.walk(Path(p)) for p in args.paths[0] ):
-      duplicates = h.has_seen(file)
-      if duplicates is not None:
-        print(f'Dealing with files size {os.stat(file).st_size}:')
-        keep = min(duplicates)
-        for d in sorted(duplicates):
-          if d!=keep:
-            print(f'Would remove {d}')
-          else:
-            print(f'{d} is the path to keep')
+    w = walkers.localfsWalker()
+    h = hashers.localMD5Hasher()
+    for file in chain.from_iterable(w.walk(Path(p)) for p in args.paths[0]):
+        duplicates = h.has_seen(file)
+        if duplicates is not None:
+            print(f'Dealing with files size {os.stat(file).st_size}:')
+            keep = min(duplicates)
+            for d in sorted(duplicates):
+                if d != keep:
+                    print(f'Would remove {d}')
+                else:
+                    print(f'{d} is the path to keep')
+
 
 if __name__ == "__main__":
-  import argparse
+    import argparse
 
-  def _readable_dir(p):
-    if Path(p).is_dir():
-      return Path(p)
-    else:
-      raise argparse.ArgumentTypeError(f'{p} is not a valid directory')
-    
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--verbose','-v',action='count')
-  parser.add_argument('--noopt', '-n', action='store_true')
-  parser.add_argument('--dev', '-d', action='store_true')
-  parser.add_argument('paths', nargs='*', type=_readable_dir, action='append')
-  args = parser.parse_args()
+    def _readable_dir(p):
+        if Path(p).is_dir():
+            return Path(p)
+        else:
+            raise argparse.ArgumentTypeError(f'{p} is not a valid directory')
 
-  if args.dev:
-    print(args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', '-v', action='count')
+    parser.add_argument('--noopt', '-n', action='store_true')
+    parser.add_argument('--dev', '-d', action='store_true')
+    parser.add_argument('paths', nargs='*',
+                        type=_readable_dir, action='append')
+    args = parser.parse_args()
 
-  if not args.paths:
-    args.paths = [ Path().resolve() ]
+    if args.dev:
+        print(args)
 
-  if args.dev:
-    print(args)
+    if not args.paths:
+        args.paths = [Path().resolve()]
 
-  main(args)
+    if args.dev:
+        print(args)
 
-# vim: tabstop=8 expandtab shiftwidth=2 softtabstop=2
+    main(args)
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
